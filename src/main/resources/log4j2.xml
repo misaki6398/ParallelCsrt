@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    
+    <Properties>
+        <Property name="logs">target/logs/</Property>
+    </Properties>
+    
+
+    <Appenders>
+        <RollingFile name="fileLogger" fileName="${logs}/ParallelCsrt.log" filePattern="${logs}/ParallelCsrt-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                <SizeBasedTriggeringPolicy size="5MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" >
+                <Delete basePath="${logs}" maxDepth="10">
+                <IfLastModified age="30d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+ 
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout   pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.oracle.parallelcsrt" level="DEBUG" additivity="true">
+            <appender-ref ref="fileLogger" level="DEBUG" />
+        </Logger>
+        <Root level="DEBUG" additivity="false">
+            <appender-ref ref="console" />
+        </Root>
+    </Loggers>
+</Configuration>
