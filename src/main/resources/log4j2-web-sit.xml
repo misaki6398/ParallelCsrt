@@ -2,7 +2,7 @@
 <Configuration status="warn">
     
     <Properties>
-        <Property name="logs">/wbdata/middleware/domains/fccmha_domain/applications/FCCM.ear/FCCM.war/logs</Property>
+        <Property name="logs">/wbdata/middleware/wls12213/user_projects/domains/kyc_domain/applications/FCCM.ear/FCCM.war/logs</Property>
     </Properties>
     
 

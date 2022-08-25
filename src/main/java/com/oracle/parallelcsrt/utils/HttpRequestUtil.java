@@ -13,7 +13,7 @@ import com.oracle.parallelcsrt.models.HttpResponseModel;
 
 public class HttpRequestUtil {
     public static HttpResponseModel post(String targetUrl) throws IOException {
-        URL url = new URL(targetUrl);
+        URL url = new URL(null, targetUrl, new sun.net.www.protocol.https.Handler());
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         // connection.setRequestProperty("Content-Type", "application/json");
@@ -22,7 +22,7 @@ public class HttpRequestUtil {
         String responseLine = "";
         StringBuilder response;
         connection.connect();
-        
+
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader((connection.getInputStream()), StandardCharsets.UTF_8))) {
 
@@ -41,7 +41,7 @@ public class HttpRequestUtil {
     }
 
     public static HttpResponseModel post(String targetUrl, String jsonString) throws IOException {
-        URL url = new URL(targetUrl);
+        URL url = new URL(null, targetUrl,  new sun.net.www.protocol.https.Handler());
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
@@ -51,13 +51,13 @@ public class HttpRequestUtil {
         String responseLine = "";
         StringBuilder response;
 
-        try(OutputStream outputStream = connection.getOutputStream()) {
+        try (OutputStream outputStream = connection.getOutputStream()) {
             byte[] input = jsonString.getBytes(StandardCharsets.UTF_8);
-            outputStream.write(input,0,input.length);
+            outputStream.write(input, 0, input.length);
         }
 
         connection.connect();
-        
+
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader((connection.getInputStream()), StandardCharsets.UTF_8))) {
 

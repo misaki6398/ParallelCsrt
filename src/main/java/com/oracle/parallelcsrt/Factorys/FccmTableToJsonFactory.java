@@ -11,15 +11,15 @@ public class FccmTableToJsonFactory {
         switch (customerType) {
             case "ORG":
                 return HttpRequestUtil
-                        .post(ConfigUtil.TABLE_TO_JSON_URL + "?mappingId=CS_INPUT_NONIND_OB&requestId=" + requestId
+                        .post(ConfigUtil.TABLE_TO_JSON_URL + "?mappingId=" +  ConfigUtil.CS_INPUT_MAP_NAME_NONIND +"&requestId=" + requestId
                                 + "&customerId=" + customerId);
             case "FIN":
                 return HttpRequestUtil
-                        .post(ConfigUtil.TABLE_TO_JSON_URL + "?mappingId=CS_INPUT_NONIND_OB&requestId=" + requestId
+                        .post(ConfigUtil.TABLE_TO_JSON_URL + "?mappingId=" +  ConfigUtil.CS_INPUT_MAP_NAME_NONIND +"&requestId=" + requestId
                                 + "&customerId=" + customerId);
             case "IND":
                 return HttpRequestUtil
-                        .post(ConfigUtil.TABLE_TO_JSON_URL  + "?mappingId=CS_INPUT_IND_OB&requestId=" + requestId
+                        .post(ConfigUtil.TABLE_TO_JSON_URL + "?mappingId=" +  ConfigUtil.CS_INPUT_MAP_NAME_IND +"&requestId=" + requestId
                                 + "&customerId=" + customerId);
             default:
                 throw new UnsupportedOperationException(customerType + " not support");
