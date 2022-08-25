@@ -38,7 +38,7 @@ public class CallCsrt {
 
             long start = System.currentTimeMillis();
 
-            ExecutorService exec = Executors.newFixedThreadPool(10);
+            ExecutorService exec = Executors.newFixedThreadPool(ConfigUtil.MAX_THREAD_NUM);
             List<Callable<Boolean>> tasks = new ArrayList<>();
             for (final GatewayInputModel model : gatewayInputModels) {
                 tasks.add(new ScreeningCallable(model));
@@ -47,7 +47,7 @@ public class CallCsrt {
             try {
                 logger.debug("Invoke SUCCESS " + gatewayInputModels.size() + " threads invoked. Reqid:" + requestId
                         + ", CustCount:" + maxCustomerCount);
-                exec.invokeAll(tasks);                
+                exec.invokeAll(tasks);
             } catch (Exception e) {
                 logger.error(e, e);
                 throw e;
@@ -58,7 +58,8 @@ public class CallCsrt {
             long end = System.currentTimeMillis() - start;
             logger.debug(String.format("Elasped time %d ms", end));
 
-            return "SUCCESS";
+            return "Invoke SUCCESS " + gatewayInputModels.size() + " threads invoked. Reqid:" + requestId
+                    + ", CustCount:" + maxCustomerCount + ", Elasped time:" + end + " ms";
 
         } catch (Exception e) {
             e.printStackTrace();

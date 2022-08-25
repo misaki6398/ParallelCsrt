@@ -50,7 +50,7 @@ public class HttpRequestUtil {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("Authorization", "basic ZmNjbWFkbW46cGFzc3dvcmQx");
+        connection.setRequestProperty("Authorization", "basic " + ConfigUtil.FCCM_AUTH);
         connection.setDoOutput(true);
         connection.setUseCaches(false);
         String responseLine = "";

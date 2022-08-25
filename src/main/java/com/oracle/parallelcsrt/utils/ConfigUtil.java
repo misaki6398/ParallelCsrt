@@ -8,6 +8,7 @@ public class ConfigUtil {
     public static final String JSON_TO_TABLE_URL = ConfigUtil.FCCM_URL + "/JSONToTablePersistenceUtility/jsonToTable/persistJSON";
     public static final String ORG_CSRT_URL = ConfigUtil.FCCM_URL + "/FCCM/rest-api/RTScreening/RTScreeningRestService/service/EntityScreen";
     public static final String IND_CSRT_URL = ConfigUtil.FCCM_URL + "/FCCM/rest-api/RTScreening/RTScreeningRestService/service/IndividualScreen";
+    public static final String FCCM_AUTH = getConfigElementString("FCCM_AUTH");
     public static final String CS_INPUT_MAP_NAME_IND = getConfigElementString("CS_INPUT_MAP_NAME_IND");
     public static final String CS_INPUT_MAP_NAME_NONIND = getConfigElementString("CS_INPUT_MAP_NAME_NONIND");
     public static final int RETRY_MAX_NUMBER = Integer.parseInt(getConfigElementString("RETRY_MAX_NUMBER"));
