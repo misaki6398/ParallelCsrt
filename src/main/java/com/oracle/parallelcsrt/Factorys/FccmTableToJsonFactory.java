@@ -1,4 +1,4 @@
-package com.oracle.parallelcsrt.Factorys;
+package com.oracle.parallelcsrt.factorys;
 
 import java.io.IOException;
 
