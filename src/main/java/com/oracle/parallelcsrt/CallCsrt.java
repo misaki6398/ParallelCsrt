@@ -9,11 +9,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.oracle.parallelcsrt.callables.ScreeningCallable;
 import com.oracle.parallelcsrt.factorys.FccmCsrtFactory;
 import com.oracle.parallelcsrt.factorys.FccmTableToJsonFactory;
 import com.oracle.parallelcsrt.models.HttpResponseModel;
 import com.oracle.parallelcsrt.models.GatewayInput.GatewayInputModel;
-import com.oracle.parallelcsrt.runnables.ScreeningRunable;
 import com.oracle.parallelcsrt.utils.ConfigUtil;
 import com.oracle.parallelcsrt.utils.HttpRequestUtil;
 import com.oracle.parallelcsrt.utils.JsonUtil;
@@ -37,27 +37,24 @@ public class CallCsrt {
             }
 
             long start = System.currentTimeMillis();
-            int threadCount = 0;
-            ExecutorService exec = Executors.newFixedThreadPool(5);
 
+            ExecutorService exec = Executors.newFixedThreadPool(10);
+            List<Callable<Boolean>> tasks = new ArrayList<>();
             for (final GatewayInputModel model : gatewayInputModels) {
-                try {
-                    threadCount++;
-                    exec.execute(new ScreeningRunable(model));
-                    logger.debug("Invoke SUCCESS " + threadCount + " threads invoked. Reqid:" + requestId
-                            + ", CustCount:" + maxCustomerCount);
-                } catch (Exception e) {
-                    logger.error(e, e);
-                    throw e;
-                }
+                tasks.add(new ScreeningCallable(model));
             }
-            exec.shutdown();
 
-            // try {
-            //     exec.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            // } catch (Exception e) {
-            //     e.printStackTrace();
-            // }
+            try {
+                logger.debug("Invoke SUCCESS " + gatewayInputModels.size() + " threads invoked. Reqid:" + requestId
+                        + ", CustCount:" + maxCustomerCount);
+                exec.invokeAll(tasks);                
+            } catch (Exception e) {
+                logger.error(e, e);
+                throw e;
+            } finally {
+                exec.shutdown();
+            }
+
             long end = System.currentTimeMillis() - start;
             logger.debug(String.format("Elasped time %d ms", end));
 

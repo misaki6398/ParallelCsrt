@@ -1,6 +1,7 @@
-package com.oracle.parallelcsrt.runnables;
+package com.oracle.parallelcsrt.callables;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import com.oracle.parallelcsrt.factorys.FccmCsrtFactory;
 import com.oracle.parallelcsrt.factorys.FccmTableToJsonFactory;
@@ -12,32 +13,33 @@ import com.oracle.parallelcsrt.utils.HttpRequestUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ScreeningRunable implements Runnable {
-    private static final Logger logger = LogManager.getLogger(ScreeningRunable.class);
+public class ScreeningCallable implements Callable {
+    private static final Logger logger = LogManager.getLogger(ScreeningCallable.class);
 
     
     GatewayInputModel model;
-    public ScreeningRunable(GatewayInputModel model) {
+    public ScreeningCallable(GatewayInputModel model) {
         this.model = model;
     }
 
-    public void run() {
+    public Boolean call() {
         for (int i = 0; i < ConfigUtil.RETRY_MAX_NUMBER; i++) {
             try {
-                if (!sendScreen(model)) {
+                if (sendScreen(model)) {
+                    return true;
+                } else {
                     logger.error("Got error response wait to retry, req ID: " + model.getSourceID()
                             + ", cust seq id:" + model.getCustomer().getCustomerUniqueId());
                     logger.error("Sleep " + ConfigUtil.RETRY_SLEEP_INTERVAL + " ms and retry");
-                    Thread.sleep(ConfigUtil.RETRY_SLEEP_INTERVAL);
-                } else {
-                    return;
+                    Thread.sleep(ConfigUtil.RETRY_SLEEP_INTERVAL);                    
                 }
             } catch (IOException | InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                logger.error(e.getStackTrace());                
+                logger.error(e.getStackTrace());
             }
         }        
+        return false;
     }
 
      /**
