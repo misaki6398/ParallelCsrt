@@ -7,7 +7,7 @@ import com.oracle.parallelcsrt.factorys.FccmCsrtFactory;
 import com.oracle.parallelcsrt.factorys.FccmTableToJsonFactory;
 import com.oracle.parallelcsrt.models.HttpResponseModel;
 import com.oracle.parallelcsrt.models.GatewayInput.GatewayInputModel;
-import com.oracle.parallelcsrt.utils.ConfigUtil;
+import com.oracle.parallelcsrt.utils.Properties;
 import com.oracle.parallelcsrt.utils.HttpRequestUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,15 +23,15 @@ public class ScreeningCallable implements Callable {
     }
 
     public Boolean call() {
-        for (int i = 0; i < ConfigUtil.RETRY_MAX_NUMBER; i++) {
+        for (int i = 0; i < Properties.RETRY_MAX_NUMBER; i++) {
             try {
                 if (sendScreen(model)) {
                     return true;
                 } else {
                     logger.error("Got error response wait to retry, req ID: " + model.getSourceID()
                             + ", cust seq id:" + model.getCustomer().getCustomerUniqueId());
-                    logger.error("Sleep " + ConfigUtil.RETRY_SLEEP_INTERVAL + " ms and retry");
-                    Thread.sleep(ConfigUtil.RETRY_SLEEP_INTERVAL);                    
+                    logger.error("Sleep " + Properties.RETRY_SLEEP_INTERVAL + " ms and retry");
+                    Thread.sleep(Properties.RETRY_SLEEP_INTERVAL);                    
                 }
             } catch (IOException | InterruptedException e) {
                 // TODO Auto-generated catch block
@@ -72,7 +72,7 @@ public class ScreeningCallable implements Callable {
         if (HttpRequestUtil.checkResponseOk("CS Screen", response)) {
             String csResult = response.getResponseString();
             response = HttpRequestUtil
-                    .post(ConfigUtil.JSON_TO_TABLE_URL + "?mappingID=CS_WLS_RESPONSE&requestId="
+                    .post(Properties.JSON_TO_TABLE_URL + "?mappingID=CS_WLS_RESPONSE&requestId="
                             + gatewayInputModel.getSourceID() + "&customerId="
                             + gatewayInputModel.getCustomer().getCustomerUniqueId(), csResult);
         } else {

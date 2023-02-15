@@ -21,7 +21,6 @@ public class HttpRequestUtil {
         URL url = new URL(null, targetUrl, new sun.net.www.protocol.https.Handler());
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
-        // connection.setRequestProperty("Content-Type", "application/json");
         connection.setDoOutput(true);
         connection.setUseCaches(false);
         String responseLine = "";
@@ -50,7 +49,7 @@ public class HttpRequestUtil {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("Authorization", "basic " + ConfigUtil.FCCM_AUTH);
+        connection.setRequestProperty("Authorization", "basic " + Properties.FCCM_AUTH);
         connection.setDoOutput(true);
         connection.setUseCaches(false);
         String responseLine = "";

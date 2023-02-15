@@ -6,15 +6,10 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import com.oracle.parallelcsrt.callables.ScreeningCallable;
-import com.oracle.parallelcsrt.factorys.FccmCsrtFactory;
-import com.oracle.parallelcsrt.factorys.FccmTableToJsonFactory;
 import com.oracle.parallelcsrt.models.HttpResponseModel;
 import com.oracle.parallelcsrt.models.GatewayInput.GatewayInputModel;
-import com.oracle.parallelcsrt.utils.ConfigUtil;
+import com.oracle.parallelcsrt.utils.Properties;
 import com.oracle.parallelcsrt.utils.HttpRequestUtil;
 import com.oracle.parallelcsrt.utils.JsonUtil;
 import com.oracle.parallelcsrt.utils.SslUtil;
@@ -23,6 +18,12 @@ import org.apache.logging.log4j.Logger;
 
 public class CallCsrt {
     private static final Logger logger = LogManager.getLogger(CallCsrt.class);
+    /**
+     * 
+     * @param requestId
+     * @param maxCustomerCount
+     * @return FCCM workflow will record this response string
+     */
 
     public String sendCsrtMain(String requestId, Integer maxCustomerCount) {
         try {
@@ -38,7 +39,7 @@ public class CallCsrt {
 
             long start = System.currentTimeMillis();
 
-            ExecutorService exec = Executors.newFixedThreadPool(ConfigUtil.MAX_THREAD_NUM);
+            ExecutorService exec = Executors.newFixedThreadPool(Properties.MAX_THREAD_NUM);
             List<Callable<Boolean>> tasks = new ArrayList<>();
             for (final GatewayInputModel model : gatewayInputModels) {
                 tasks.add(new ScreeningCallable(model));
@@ -74,7 +75,7 @@ public class CallCsrt {
         int retryCount = 0;
         for (int custCount = 1; custCount <= maxCustomerCount; custCount++) {
             HttpResponseModel response = HttpRequestUtil
-                    .post(ConfigUtil.TABLE_TO_JSON_URL + "?mappingId=CMMN_GATEWAY_INPUT&requestId="
+                    .post(Properties.TABLE_TO_JSON_URL + "?mappingId=CMMN_GATEWAY_INPUT&requestId="
                             + requestId + "&customerCounter=" + custCount);
             if (HttpRequestUtil.checkResponseOk("CMMN_GATEWAY_INPUT", response)) {
                 GatewayInputModel gatewayInputModel = JsonUtil.deserialize(response.getResponseString(),
@@ -82,7 +83,7 @@ public class CallCsrt {
                 gatewayInputModels.add(gatewayInputModel);
                 retryCount = 0;
             } else {
-                if (retryCount < ConfigUtil.RETRY_MAX_NUMBER) {
+                if (retryCount < Properties.RETRY_MAX_NUMBER) {
                     custCount--;
                     retryCount++;
                 }
